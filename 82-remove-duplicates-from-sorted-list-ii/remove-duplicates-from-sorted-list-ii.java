@@ -10,22 +10,28 @@
  */
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        if (head == null || head.next == null) {
-            return head;
+        // Dummy node pointing to head to easily handle head removal
+        ListNode dummy = new ListNode(0, head);
+        ListNode prev = dummy;
+        ListNode curr = head;
+
+        while (curr != null) {
+            // Check if curr is the start of a duplicate sequence
+            if (curr.next != null && curr.val == curr.next.val) {
+                // Move curr to the end of the duplicate sequence
+                while (curr.next != null && curr.val == curr.next.val) {
+                    curr = curr.next;
+                }
+                // Link prev past all duplicates
+                prev.next = curr.next;
+            } else {
+                // No duplicate found for curr.val, safe to move prev forward
+                prev = prev.next;
+            }
+            // Move curr to the next unexamined node
+            curr = curr.next;
         }
 
-        // Check if current node is part of a duplicate sequence
-        if (head.val == head.next.val) {
-            // Skip all nodes with the duplicate value
-            while (head.next != null && head.val == head.next.val) {
-                head = head.next;
-            }
-            // Exclude the last duplicate node as well by moving to head.next
-            return deleteDuplicates(head.next);
-        } else {
-            // No duplicate, recursively solve for the rest of the list
-            head.next = deleteDuplicates(head.next);
-            return head;
-        }
+        return dummy.next;
     }
 }
